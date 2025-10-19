@@ -24,43 +24,43 @@ type FileCompareResult struct {
 }
 
 func HandleFileCompareUpload(c *gin.Context) {
-	// 创建上传目录
+	// Create upload directory.
 	uploadDir := "uploads/file-compare"
 	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "创建上传目录失败"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create upload directory"})
 		return
 	}
 
-	// 获取上传的文件
+	// Retrieve uploaded files.
 	form, err := c.MultipartForm()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "获取上传文件失败"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to retrieve uploaded files"})
 		return
 	}
 
 	files := form.File["files"]
 	if len(files) != 2 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "请上传两个文件进行比较"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "upload exactly two files to compare"})
 		return
 	}
 
-	// 保存文件
+	// Save files to disk.
 	var savedFiles []string
 	for i, file := range files {
-		// 生成唯一文件名
+		// Generate unique file name.
 		timestamp := time.Now().UnixNano()
 		filename := fmt.Sprintf("%d_%s", timestamp+int64(i), file.Filename)
 		filepath := filepath.Join(uploadDir, filename)
 
 		if err := c.SaveUploadedFile(file, filepath); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "保存文件失败"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save file"})
 			return
 		}
 		savedFiles = append(savedFiles, filepath)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "文件上传成功",
+		"message": "files uploaded successfully",
 		"files":   savedFiles,
 	})
 }
@@ -70,31 +70,31 @@ func HandleFileCompare(c *gin.Context) {
 	file2Path := c.Query("file2")
 
 	if file1Path == "" || file2Path == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "缺少文件路径参数"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing file path parameter"})
 		return
 	}
 
-	// 读取文件内容
+	// Read file content.
 	content1, err := readFileContent(file1Path)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "读取文件1失败: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read file1: " + err.Error()})
 		return
 	}
 
 	content2, err := readFileContent(file2Path)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "读取文件2失败: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read file2: " + err.Error()})
 		return
 	}
 
-	// 生成差异
+	// Generate diff.
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain(content1, content2, true)
 
-	// 生成HTML格式的差异
+	// Generate HTML diff.
 	diffHTML := dmp.DiffPrettyHtml(diffs)
 
-	// 生成逐行比较
+	// Generate line-by-line comparison.
 	lines1 := strings.Split(content1, "\n")
 	lines2 := strings.Split(content2, "\n")
 	diffLines := generateLineByLineDiff(lines1, lines2)

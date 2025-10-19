@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// readFileContent 读取文件内容
+// readFileContent reads the entire file content into a string.
 func readFileContent(filepath string) (string, error) {
 	file, err := os.Open(filepath)
 	if err != nil {
@@ -21,17 +21,17 @@ func readFileContent(filepath string) (string, error) {
 	return string(content), nil
 }
 
-// generateLineByLineDiff 生成逐行差异比较
+// generateLineByLineDiff builds a line-by-line diff result.
 func generateLineByLineDiff(lines1, lines2 []string) []DiffLine {
 	var diffLines []DiffLine
 
-	// 使用简单的LCS算法进行逐行比较
+	// Use a simple LCS-inspired comparison.
 	i, j := 0, 0
 	lineNum1, lineNum2 := 1, 1
 
 	for i < len(lines1) || j < len(lines2) {
 		if i >= len(lines1) {
-			// 文件1已结束，剩余的都是插入
+			// File1 is exhausted, remaining lines are inserts.
 			diffLines = append(diffLines, DiffLine{
 				Type:     "insert",
 				Line1:    "",
@@ -42,7 +42,7 @@ func generateLineByLineDiff(lines1, lines2 []string) []DiffLine {
 			j++
 			lineNum2++
 		} else if j >= len(lines2) {
-			// 文件2已结束，剩余的都是删除
+			// File2 is exhausted, remaining lines are deletes.
 			diffLines = append(diffLines, DiffLine{
 				Type:     "delete",
 				Line1:    lines1[i],
@@ -53,7 +53,7 @@ func generateLineByLineDiff(lines1, lines2 []string) []DiffLine {
 			i++
 			lineNum1++
 		} else if lines1[i] == lines2[j] {
-			// 行相同
+			// Lines are identical.
 			diffLines = append(diffLines, DiffLine{
 				Type:     "equal",
 				Line1:    lines1[i],
@@ -66,8 +66,8 @@ func generateLineByLineDiff(lines1, lines2 []string) []DiffLine {
 			lineNum1++
 			lineNum2++
 		} else {
-			// 行不同，需要进一步判断
-			// 简单的启发式：如果下一行匹配，则当前行是修改
+			// Lines differ, apply heuristics.
+			// Simple heuristic: if the next line matches, treat current line as a modification.
 			if i+1 < len(lines1) && j+1 < len(lines2) && lines1[i+1] == lines2[j+1] {
 				diffLines = append(diffLines, DiffLine{
 					Type:     "delete",
@@ -88,7 +88,7 @@ func generateLineByLineDiff(lines1, lines2 []string) []DiffLine {
 				lineNum1++
 				lineNum2++
 			} else if i+1 < len(lines1) && lines1[i+1] == lines2[j] {
-				// 文件1多了一行
+				// File1 has an extra line.
 				diffLines = append(diffLines, DiffLine{
 					Type:     "delete",
 					Line1:    lines1[i],
@@ -99,7 +99,7 @@ func generateLineByLineDiff(lines1, lines2 []string) []DiffLine {
 				i++
 				lineNum1++
 			} else if j+1 < len(lines2) && lines1[i] == lines2[j+1] {
-				// 文件2多了一行
+				// File2 has an extra line.
 				diffLines = append(diffLines, DiffLine{
 					Type:     "insert",
 					Line1:    "",
@@ -110,7 +110,7 @@ func generateLineByLineDiff(lines1, lines2 []string) []DiffLine {
 				j++
 				lineNum2++
 			} else {
-				// 都不匹配，当作修改处理
+				// Nothing matches, treat as a modification.
 				diffLines = append(diffLines, DiffLine{
 					Type:     "delete",
 					Line1:    lines1[i],

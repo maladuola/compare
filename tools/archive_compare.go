@@ -48,53 +48,53 @@ type TransactionComparison struct {
 }
 
 func HandleArchiveUpload(c *gin.Context) {
-	// 创建上传目录
+	// Create upload directory.
 	uploadDir := "uploads/archive-compare"
 	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "创建上传目录失败"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create upload directory"})
 		return
 	}
 
-	// 获取上传的文件
+	// Retrieve uploaded file.
 	file, err := c.FormFile("file")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "获取上传文件失败"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to retrieve uploaded file"})
 		return
 	}
 
-	// 检查文件扩展名
+	// Validate file extension.
 	ext := filepath.Ext(file.Filename)
 	if ext != ".zip" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "请上传ZIP压缩文件"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "please upload a ZIP archive"})
 		return
 	}
 
-	// 生成唯一文件名
+	// Generate unique file name.
 	timestamp := time.Now().UnixNano()
 	filename := fmt.Sprintf("%d_%s", timestamp, file.Filename)
 	filePath := filepath.Join(uploadDir, filename)
 
 	if err := c.SaveUploadedFile(file, filePath); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "保存文件失败"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save file"})
 		return
 	}
 
-	// 解压文件
+	// Extract archive.
 	extractDir := filepath.Join(uploadDir, fmt.Sprintf("extracted_%d", timestamp))
 	if err := extractZip(filePath, extractDir); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "解压文件失败: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to extract archive: " + err.Error()})
 		return
 	}
 
-	// 分析解压后的目录结构
+	// Analyze extracted structure.
 	directories, transactions, err := analyzeExtractedArchive(extractDir)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "分析文件结构失败: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to analyze archive structure: " + err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":      "压缩文件上传和解压成功",
+		"message":      "archive uploaded and extracted successfully",
 		"archive_file": filePath,
 		"extract_dir":  extractDir,
 		"directories":  directories,
@@ -106,21 +106,21 @@ func HandleArchiveCompare(c *gin.Context) {
 	extractDir := c.Query("extract_dir")
 
 	if extractDir == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "缺少解压目录参数"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing extract directory parameter"})
 		return
 	}
 
-	// 分析解压后的目录结构
+	// Analyze extracted structure.
 	directories, transactions, err := analyzeExtractedArchive(extractDir)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "分析文件结构失败: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to analyze archive structure: " + err.Error()})
 		return
 	}
 
-	// 进行交易文件比较
+	// Compare trade files.
 	comparisons, err := compareTransactionFiles(extractDir, transactions)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "比较交易文件失败: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to compare trade files: " + err.Error()})
 		return
 	}
 
@@ -143,7 +143,7 @@ func extractZip(src, dest string) error {
 
 	os.MkdirAll(dest, 0755)
 
-	// 遍历zip文件中的文件
+	// Iterate through archive entries.
 	for _, f := range r.File {
 		rc, err := f.Open()
 		if err != nil {
@@ -178,18 +178,18 @@ func analyzeExtractedArchive(extractDir string) ([]string, []TransactionInfo, er
 	var directories []string
 	transactionMap := make(map[string]*TransactionInfo)
 
-	// 遍历解压后的目录
+	// Walk the extracted directory tree.
 	err := filepath.Walk(extractDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// 跳过根目录
+		// Skip root directory.
 		if path == extractDir {
 			return nil
 		}
 
-		// 如果是目录，记录目录名
+		// Record directory names.
 		if info.IsDir() {
 			relPath, _ := filepath.Rel(extractDir, path)
 			if relPath != "." {
@@ -198,7 +198,7 @@ func analyzeExtractedArchive(extractDir string) ([]string, []TransactionInfo, er
 			return nil
 		}
 
-		// 如果是文件，检查是否是交易文件
+		// Process potential trade files.
 		fileName := info.Name()
 		if isTransactionFile(fileName) {
 			transactionID, fileType := parseTransactionFileName(fileName)
@@ -214,7 +214,7 @@ func analyzeExtractedArchive(extractDir string) ([]string, []TransactionInfo, er
 					}
 				}
 
-				// 添加目录（如果还没有）
+				// Ensure directory is tracked.
 				hasDir := false
 				for _, d := range transactionMap[transactionID].Directories {
 					if d == dir {
@@ -226,7 +226,7 @@ func analyzeExtractedArchive(extractDir string) ([]string, []TransactionInfo, er
 					transactionMap[transactionID].Directories = append(transactionMap[transactionID].Directories, dir)
 				}
 
-				// 添加文件
+				// Track file metadata.
 				transactionMap[transactionID].Files = append(transactionMap[transactionID].Files, TransactionFile{
 					Directory: dir,
 					FileName:  fileName,
@@ -243,44 +243,43 @@ func analyzeExtractedArchive(extractDir string) ([]string, []TransactionInfo, er
 		return nil, nil, err
 	}
 
-	// 转换为切片并排序
+	// Build slice and sort.
 	var transactions []TransactionInfo
 	for _, t := range transactionMap {
 		transactions = append(transactions, *t)
 	}
 
-	// 按交易ID排序
+	// Sort by transaction ID.
 	sort.Slice(transactions, func(i, j int) bool {
 		return transactions[i].ID < transactions[j].ID
 	})
 
-	// 目录排序
+	// Sort directory names.
 	sort.Strings(directories)
 
 	return directories, transactions, nil
 }
 
 func isTransactionFile(fileName string) bool {
-	// 检查文件名是否符合模式：babyy-risk-{id}.txt 或 candyy-risk-{id}.txt
+	// Validate trade file names: babyy-risk-{id}.txt or candyy-risk-{id}.txt
 	pattern := `^(babyy-risk-|candyy-risk-).*\.txt$`
 	matched, _ := regexp.MatchString(pattern, fileName)
 	return matched
 }
 
 func parseTransactionFileName(fileName string) (string, string) {
-	// 解析文件名：babyy-risk-13233-2332.txt -> 13233-2332, baby
-	// 解析文件名：candyy-risk-13233-2332.txt -> 13233-2332, candy
+	// Example: babyy-risk-13233-2332.txt -> 13233-2332, baby
+	// Example: candyy-risk-13233-2332.txt -> 13233-2332, candy
 
-	// 移除.txt扩展名
+	// Remove extension.
 	name := strings.TrimSuffix(fileName, ".txt")
 
-	// 检查是否是baby文件
+	// Determine file type.
 	if strings.HasPrefix(name, "babyy-risk-") {
 		transactionID := strings.TrimPrefix(name, "babyy-risk-")
 		return transactionID, "baby"
 	}
 
-	// 检查是否是candy文件
 	if strings.HasPrefix(name, "candyy-risk-") {
 		transactionID := strings.TrimPrefix(name, "candyy-risk-")
 		return transactionID, "candy"
@@ -293,12 +292,12 @@ func compareTransactionFiles(extractDir string, transactions []TransactionInfo) 
 	var comparisons []TransactionComparison
 
 	for _, transaction := range transactions {
-		// 为每个目录比较该交易的文件
+		// Compare files in each directory for this transaction.
 		for _, dir := range transaction.Directories {
 			var babyFile, candyFile string
 			var babyContent, candyContent string
 
-			// 查找该目录下的baby和candy文件
+			// Locate baby and candy files within the directory.
 			for _, file := range transaction.Files {
 				if file.Directory == dir {
 					content, err := readFileContent(file.FilePath)
@@ -316,14 +315,14 @@ func compareTransactionFiles(extractDir string, transactions []TransactionInfo) 
 				}
 			}
 
-			// 如果找到了两个文件，进行比较
+			// Compare when both files are present.
 			if babyFile != "" && candyFile != "" {
-				// 生成差异
+				// Generate diff.
 				dmp := diffmatchpatch.New()
 				diffs := dmp.DiffMain(babyContent, candyContent, true)
 				diffHTML := dmp.DiffPrettyHtml(diffs)
 
-				// 生成逐行比较
+				// Build line-by-line comparison.
 				lines1 := strings.Split(babyContent, "\n")
 				lines2 := strings.Split(candyContent, "\n")
 				diffLines := generateLineByLineDiff(lines1, lines2)

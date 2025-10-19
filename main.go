@@ -11,50 +11,50 @@ import (
 )
 
 func main() {
-	// 设置Gin为发布模式
+	// Set Gin to release mode.
 	gin.SetMode(gin.ReleaseMode)
 
-	log.Println("正在启动 Mogost 工具集服务器...")
+	log.Println("Starting Mogost Toolkit server...")
 
 	r := gin.Default()
 
-	// 静态文件服务
+	// Static file service.
 	r.Static("/static", "./static")
 	r.LoadHTMLGlob("templates/*")
 
-	// 主页面
+	// Main page route.
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "Mogost 工具集",
+			"title": "Mogost Toolkit",
 		})
 	})
 
-	// 工具1：文件比较
+	// Tool 1: File comparison.
 	fileCompare := r.Group("/api/file-compare")
 	{
 		fileCompare.POST("/upload", tools.HandleFileCompareUpload)
 		fileCompare.GET("/compare", tools.HandleFileCompare)
 	}
 
-	// 工具2：CSV查看器
+	// Tool 2: CSV viewer.
 	csvViewer := r.Group("/api/csv")
 	{
 		csvViewer.POST("/upload", tools.HandleCSVUpload)
 		csvViewer.GET("/view", tools.HandleCSVView)
 	}
 
-	// 工具3：压缩文件解压和交易文件比较
+	// Tool 3: Archive extraction and trade comparison.
 	archiveCompare := r.Group("/api/archive-compare")
 	{
 		archiveCompare.POST("/upload", tools.HandleArchiveUpload)
 		archiveCompare.GET("/compare", tools.HandleArchiveCompare)
 	}
 
-	// 创建必要的目录
+	// Create required directories.
 	createDirectories()
 
-	log.Println("Mogost 工具集服务器启动在 :8080")
-	log.Println("请在浏览器中访问: http://localhost:8080")
+	log.Println("Mogost Toolkit server is running on :8080")
+	log.Println("Open http://localhost:8080 in your browser")
 	log.Fatal(r.Run(":8080"))
 }
 
@@ -69,12 +69,12 @@ func createDirectories() {
 		"temp",
 	}
 
-	log.Println("正在创建必要目录...")
+	log.Println("Creating required directories...")
 	for _, dir := range dirs {
 		if err := os.MkdirAll(dir, 0755); err != nil {
-			log.Printf("创建目录失败 %s: %v", dir, err)
+			log.Printf("Failed to create directory %s: %v", dir, err)
 		} else {
-			log.Printf("创建目录成功: %s", dir)
+			log.Printf("Created directory: %s", dir)
 		}
 	}
 }

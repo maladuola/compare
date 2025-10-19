@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mogost 工具集</title>
+    <title>Mogost Toolkit</title>
     <style>
         * {
             margin: 0;
@@ -343,66 +343,66 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Mogost 工具集</h1>
-            <p>专业的文件处理和比较工具套件</p>
+            <h1>Mogost Toolkit</h1>
+            <p>Professional file processing and comparison toolkit</p>
         </div>
 
         <div class="tools-grid">
             <div class="tool-card" onclick="openTool('file-compare')">
                 <div class="tool-icon">📄</div>
-                <div class="tool-title">文件比较工具</div>
+                <div class="tool-title">File Comparison</div>
                 <div class="tool-description">
-                    上传两个文件进行内容比较，支持类似 Beyond Compare 的左右对齐显示，
-                    红色字体高亮显示差异部分。
+                    Upload two files to compare their content with a Beyond Compare style layout
+                    and highlight differences in red.
                 </div>
-                <button class="tool-button">开始使用</button>
+                <button class="tool-button">Get Started</button>
             </div>
 
             <div class="tool-card" onclick="openTool('csv-viewer')">
                 <div class="tool-icon">📊</div>
-                <div class="tool-title">CSV 文件查看器</div>
+                <div class="tool-title">CSV Viewer</div>
                 <div class="tool-description">
-                    上传 CSV 文件并查看其内容，支持表格形式展示，
-                    自动识别数据类型和列结构。
+                    Upload a CSV file, inspect the table output,
+                    and automatically detect data types and columns.
                 </div>
-                <button class="tool-button">开始使用</button>
+                <button class="tool-button">Get Started</button>
             </div>
 
             <div class="tool-card" onclick="openTool('archive-compare')">
                 <div class="tool-icon">📦</div>
-                <div class="tool-title">压缩文件交易比较</div>
+                <div class="tool-title">Archive Trade Comparison</div>
                 <div class="tool-description">
-                    上传压缩文件，自动解压并比较不同目录中的交易文件，
-                    支持 baby-risk 和 candy-risk 文件的差异对比。
+                    Upload a ZIP archive, extract it automatically,
+                    and compare baby-risk and candy-risk trade files across directories.
                 </div>
-                <button class="tool-button">开始使用</button>
+                <button class="tool-button">Get Started</button>
             </div>
         </div>
     </div>
 
-    <!-- 文件比较工具模态框 -->
+    <!-- File comparison modal -->
     <div id="file-compare-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>文件比较工具</h2>
+                <h2>File Comparison</h2>
                 <span class="close" onclick="closeModal('file-compare-modal')">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="upload-area" id="file-compare-upload">
-                    <p>拖拽两个文件到此处或点击选择文件</p>
+                    <p>Drag and drop two files here or click to select them</p>
                     <input type="file" id="file-compare-input" class="file-input" multiple accept="*/*">
                     <button class="upload-button" onclick="document.getElementById('file-compare-input').click()">
-                        选择文件
+                        Choose Files
                     </button>
                 </div>
                 <div id="file-compare-result" class="result-area">
                     <div class="diff-container">
                         <div class="diff-side">
-                            <div class="diff-header" id="file1-header">文件 1</div>
+                            <div class="diff-header" id="file1-header">File 1</div>
                             <div id="file1-content"></div>
                         </div>
                         <div class="diff-side">
-                            <div class="diff-header" id="file2-header">文件 2</div>
+                            <div class="diff-header" id="file2-header">File 2</div>
                             <div id="file2-content"></div>
                         </div>
                     </div>
@@ -411,19 +411,19 @@
         </div>
     </div>
 
-    <!-- CSV查看器模态框 -->
+    <!-- CSV viewer modal -->
     <div id="csv-viewer-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>CSV 文件查看器</h2>
+                <h2>CSV Viewer</h2>
                 <span class="close" onclick="closeModal('csv-viewer-modal')">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="upload-area" id="csv-upload">
-                    <p>拖拽 CSV 文件到此处或点击选择文件</p>
+                    <p>Drag and drop a CSV file here or click to select one</p>
                     <input type="file" id="csv-input" class="file-input" accept=".csv">
                     <button class="upload-button" onclick="document.getElementById('csv-input').click()">
-                        选择 CSV 文件
+                        Choose CSV File
                     </button>
                 </div>
                 <div id="csv-result" class="result-area">
@@ -434,19 +434,19 @@
         </div>
     </div>
 
-    <!-- 压缩文件比较模态框 -->
+    <!-- Archive comparison modal -->
     <div id="archive-compare-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>压缩文件交易比较</h2>
+                <h2>Archive Trade Comparison</h2>
                 <span class="close" onclick="closeModal('archive-compare-modal')">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="upload-area" id="archive-upload">
-                    <p>拖拽 ZIP 压缩文件到此处或点击选择文件</p>
+                    <p>Drag and drop a ZIP archive here or click to select one</p>
                     <input type="file" id="archive-input" class="file-input" accept=".zip">
                     <button class="upload-button" onclick="document.getElementById('archive-input').click()">
-                        选择 ZIP 文件
+                        Choose ZIP File
                     </button>
                 </div>
                 <div id="archive-result" class="result-area">
@@ -461,30 +461,30 @@
         let currentTool = null;
         let uploadedFiles = {};
 
-        // 打开工具
+        // Open selected tool.
         function openTool(toolName) {
             currentTool = toolName;
             document.getElementById(toolName + '-modal').style.display = 'block';
             setupTool(toolName);
         }
 
-        // 关闭模态框
+        // Close modal.
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
             currentTool = null;
         }
 
-        // 设置工具
+        // Initialise the selected tool.
         function setupTool(toolName) {
             const input = document.getElementById(toolName + '-input');
             const uploadArea = document.getElementById(toolName + '-upload');
             
-            // 文件选择事件
+            // File selection events.
             input.addEventListener('change', function(e) {
                 handleFileSelect(e.target.files, toolName);
             });
 
-            // 拖拽事件
+            // Drag-and-drop events.
             uploadArea.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 uploadArea.classList.add('dragover');
@@ -502,30 +502,30 @@
             });
         }
 
-        // 处理文件选择
+        // Handle file selection.
         function handleFileSelect(files, toolName) {
             if (toolName === 'file-compare') {
                 if (files.length !== 2) {
-                    alert('请选择两个文件进行比较');
+                    alert('Please select exactly two files to compare.');
                     return;
                 }
                 uploadFiles(files, '/api/file-compare/upload', toolName);
             } else if (toolName === 'csv-viewer') {
                 if (files.length !== 1) {
-                    alert('请选择一个CSV文件');
+                    alert('Please select a CSV file.');
                     return;
                 }
                 uploadFiles(files, '/api/csv/upload', toolName);
             } else if (toolName === 'archive-compare') {
                 if (files.length !== 1) {
-                    alert('请选择一个ZIP文件');
+                    alert('Please select a ZIP file.');
                     return;
                 }
                 uploadFiles(files, '/api/archive-compare/upload', toolName);
             }
         }
 
-        // 上传文件
+        // Upload files.
         function uploadFiles(files, endpoint, toolName) {
             const formData = new FormData();
             
@@ -559,11 +559,11 @@
                 }
             })
             .catch(error => {
-                showError('上传失败: ' + error.message, toolName);
+                showError('Upload failed: ' + error.message, toolName);
             });
         }
 
-        // 比较文件
+        // Compare files.
         function compareFiles(files, toolName) {
             const params = new URLSearchParams();
             params.append('file1', files[0]);
@@ -579,11 +579,11 @@
                 }
             })
             .catch(error => {
-                showError('比较失败: ' + error.message, toolName);
+                showError('Comparison failed: ' + error.message, toolName);
             });
         }
 
-        // 显示文件比较结果
+        // Render file comparison result.
         function displayFileCompare(data, toolName) {
             const resultArea = document.getElementById(toolName + '-result');
             const file1Header = document.getElementById('file1-header');
@@ -594,7 +594,7 @@
             file1Header.textContent = data.file1_name;
             file2Header.textContent = data.file2_name;
 
-            // 显示逐行比较
+            // Render line-by-line diff output.
             let file1HTML = '';
             let file2HTML = '';
 
@@ -617,7 +617,7 @@
             resultArea.style.display = 'block';
         }
 
-        // 查看CSV
+        // Retrieve CSV data.
         function viewCSV(file, toolName) {
             const params = new URLSearchParams();
             params.append('file', file);
@@ -632,11 +632,11 @@
                 }
             })
             .catch(error => {
-                showError('查看失败: ' + error.message, toolName);
+                showError('View failed: ' + error.message, toolName);
             });
         }
 
-        // 显示CSV结果
+        // Render CSV result.
         function displayCSV(data, toolName) {
             const resultArea = document.getElementById(toolName + '-result');
             const infoDiv = document.getElementById('csv-info');
@@ -644,13 +644,13 @@
 
             infoDiv.innerHTML = `
                 <div class="success">
-                    <strong>文件:</strong> ${data.file_name}<br>
-                    <strong>总行数:</strong> ${data.total_rows}<br>
-                    <strong>总列数:</strong> ${data.total_columns}
+                    <strong>File:</strong> ${data.file_name}<br>
+                    <strong>Total Rows:</strong> ${data.total_rows}<br>
+                    <strong>Total Columns:</strong> ${data.total_columns}
                 </div>
             `;
 
-            // 创建表格
+            // Build result table.
             let tableHTML = '<table class="csv-table"><thead><tr>';
             data.headers.forEach(header => {
                 tableHTML += `<th>${escapeHtml(header)}</th>`;
@@ -671,7 +671,7 @@
             resultArea.style.display = 'block';
         }
 
-        // 比较压缩文件
+        // Compare archive contents.
         function compareArchive(extractDir, toolName) {
             const params = new URLSearchParams();
             params.append('extract_dir', extractDir);
@@ -686,11 +686,11 @@
                 }
             })
             .catch(error => {
-                showError('比较失败: ' + error.message, toolName);
+                showError('Comparison failed: ' + error.message, toolName);
             });
         }
 
-        // 显示压缩文件比较结果
+        // Render archive comparison result.
         function displayArchiveCompare(data, toolName) {
             const resultArea = document.getElementById(toolName + '-result');
             const infoDiv = document.getElementById('archive-info');
@@ -698,19 +698,19 @@
 
             infoDiv.innerHTML = `
                 <div class="success">
-                    <strong>压缩文件:</strong> ${data.archive_name}<br>
-                    <strong>目录:</strong> ${data.directories.join(', ')}<br>
-                    <strong>交易数量:</strong> ${data.transactions.length}
+                    <strong>Archive:</strong> ${data.archive_name}<br>
+                    <strong>Directories:</strong> ${data.directories.join(', ')}<br>
+                    <strong>Trades:</strong> ${data.transactions.length}
                 </div>
             `;
 
-            // 显示交易比较结果
+            // Render trade comparison cards.
             let transactionHTML = '';
             data.comparisons.forEach(comparison => {
                 transactionHTML += `
                     <div class="transaction-item">
                         <div class="transaction-header" onclick="toggleTransaction('${comparison.transaction_id}-${comparison.directory}')">
-                            <span>交易 ${comparison.transaction_id} - 目录 ${comparison.directory}</span>
+                            <span>Trade ${comparison.transaction_id} - Directory ${comparison.directory}</span>
                             <span class="toggle-icon" id="icon-${comparison.transaction_id}-${comparison.directory}">▼</span>
                         </div>
                         <div class="transaction-content" id="content-${comparison.transaction_id}-${comparison.directory}">
@@ -733,7 +733,7 @@
             resultArea.style.display = 'block';
         }
 
-        // 切换交易显示
+        // Toggle trade details.
         function toggleTransaction(id) {
             const content = document.getElementById('content-' + id);
             const icon = document.getElementById('icon-' + id);
@@ -747,7 +747,7 @@
             }
         }
 
-        // 格式化差异行
+        // Format diff lines for display.
         function formatDiffLines(diffLines, side) {
             let html = '';
             diffLines.forEach(line => {
@@ -770,28 +770,28 @@
             return html;
         }
 
-        // 显示加载状态
+        // Show loading indicator.
         function showLoading(toolName) {
             const resultArea = document.getElementById(toolName + '-result');
-            resultArea.innerHTML = '<div class="loading">处理中...</div>';
+            resultArea.innerHTML = '<div class="loading">Processing...</div>';
             resultArea.style.display = 'block';
         }
 
-        // 显示错误
+        // Display error message.
         function showError(message, toolName) {
             const resultArea = document.getElementById(toolName + '-result');
             resultArea.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
             resultArea.style.display = 'block';
         }
 
-        // HTML转义
+        // HTML escape helper.
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // 点击模态框外部关闭
+        // Close modal when clicking outside.
         window.onclick = function(event) {
             const modals = document.querySelectorAll('.modal');
             modals.forEach(modal => {

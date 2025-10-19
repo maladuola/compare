@@ -23,39 +23,39 @@ type CSVViewerResult struct {
 }
 
 func HandleCSVUpload(c *gin.Context) {
-	// 创建上传目录
+	// Create upload directory.
 	uploadDir := "uploads/csv"
 	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "创建上传目录失败"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create upload directory"})
 		return
 	}
 
-	// 获取上传的文件
+	// Retrieve uploaded file.
 	file, err := c.FormFile("file")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "获取上传文件失败"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to retrieve uploaded file"})
 		return
 	}
 
-	// 检查文件扩展名
+	// Validate file extension.
 	ext := filepath.Ext(file.Filename)
 	if ext != ".csv" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "请上传CSV文件"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "please upload a CSV file"})
 		return
 	}
 
-	// 生成唯一文件名
+	// Generate unique file name.
 	timestamp := time.Now().UnixNano()
 	filename := fmt.Sprintf("%d_%s", timestamp, file.Filename)
 	filepath := filepath.Join(uploadDir, filename)
 
 	if err := c.SaveUploadedFile(file, filepath); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "保存文件失败"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save file"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":  "CSV文件上传成功",
+		"message":  "CSV file uploaded successfully",
 		"file":     filepath,
 		"filename": file.Filename,
 	})
@@ -64,24 +64,24 @@ func HandleCSVUpload(c *gin.Context) {
 func HandleCSVView(c *gin.Context) {
 	filePath := c.Query("file")
 	previewOnly := c.DefaultQuery("preview", "false")
-	previewRows := 10 // 默认预览10行
+	previewRows := 10 // Default preview 10 rows.
 
 	if filePath == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "缺少文件路径参数"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing file path parameter"})
 		return
 	}
 
-	// 读取CSV文件
+	// Read CSV file.
 	file, err := os.Open(filePath)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "打开文件失败: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to open file: " + err.Error()})
 		return
 	}
 	defer file.Close()
 
 	reader := csv.NewReader(file)
 
-	// 读取所有行
+	// Read all rows.
 	var allRows [][]string
 	for {
 		record, err := reader.Read()
@@ -89,35 +89,35 @@ func HandleCSVView(c *gin.Context) {
 			break
 		}
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "读取CSV文件失败: " + err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read CSV file: " + err.Error()})
 			return
 		}
 		allRows = append(allRows, record)
 	}
 
 	if len(allRows) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "CSV文件为空"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "CSV file is empty"})
 		return
 	}
 
-	// 获取表头
+	// Extract headers.
 	headers := allRows[0]
 	dataRows := allRows[1:]
 
-	// 计算总行数和列数
+	// Calculate total rows and columns.
 	totalRows := len(dataRows)
 	totalColumns := len(headers)
 
-	// 准备预览数据
+	// Prepare preview data.
 	var previewData [][]string
 	if previewOnly == "true" {
-		// 只返回预览数据
-		previewData = append(previewData, headers) // 包含表头
+		// Return preview data only.
+		previewData = append(previewData, headers) // Include header row.
 		for i := 0; i < previewRows && i < len(dataRows); i++ {
 			previewData = append(previewData, dataRows[i])
 		}
 	} else {
-		// 返回所有数据
+		// Return all data.
 		previewData = allRows
 	}
 
@@ -133,7 +133,7 @@ func HandleCSVView(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// 获取CSV文件的统计信息
+// GetCSVStats returns summary information for a CSV file.
 func GetCSVStats(filePath string) (map[string]interface{}, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -165,7 +165,7 @@ func GetCSVStats(filePath string) (map[string]interface{}, error) {
 	headers := allRows[0]
 	dataRows := allRows[1:]
 
-	// 分析每列的数据类型
+	// Determine column data types.
 	columnTypes := make([]string, len(headers))
 	for i := range headers {
 		columnTypes[i] = analyzeColumnType(dataRows, i)
@@ -179,7 +179,7 @@ func GetCSVStats(filePath string) (map[string]interface{}, error) {
 	}, nil
 }
 
-// 分析列的数据类型
+// analyzeColumnType inspects a column and returns its inferred type.
 func analyzeColumnType(rows [][]string, columnIndex int) string {
 	if len(rows) == 0 {
 		return "unknown"
@@ -201,14 +201,14 @@ func analyzeColumnType(rows [][]string, columnIndex int) string {
 
 		hasData = true
 
-		// 尝试解析为浮点数
+		// Try parsing as float.
 		if _, err := strconv.ParseFloat(value, 64); err != nil {
 			isNumeric = false
 			isInteger = false
 			break
 		}
 
-		// 尝试解析为整数
+		// Try parsing as integer.
 		if _, err := strconv.ParseInt(value, 10, 64); err != nil {
 			isInteger = false
 		}

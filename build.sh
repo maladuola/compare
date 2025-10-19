@@ -1,31 +1,31 @@
 #!/bin/bash
 
-echo "Mogost 工具集构建脚本"
+echo "Mogost Toolkit build script"
 echo "======================"
 
-# 检查Go环境
+# Check Go environment
 if ! command -v go &> /dev/null; then
-    echo "错误: 未找到Go环境，请先安装Go"
+    echo "Error: Go environment not found. Please install Go first."
     exit 1
 fi
 
-echo "1. 下载依赖..."
+echo "1. Downloading dependencies..."
 go get -v
 
 if [ $? -ne 0 ]; then
-    echo "错误: 下载依赖失败"
+    echo "Error: failed to download dependencies."
     exit 1
 fi
 
-echo "2. 构建程序..."
+echo "2. Building binary..."
 go build -v -o tools
 
 if [ $? -ne 0 ]; then
-    echo "错误: 构建失败"
+    echo "Error: build failed."
     exit 1
 fi
 
-echo "3. 创建必要目录..."
+echo "3. Creating required directories..."
 mkdir -p uploads/file-compare
 mkdir -p uploads/csv
 mkdir -p uploads/archive-compare
@@ -33,16 +33,16 @@ mkdir -p static
 mkdir -p templates
 mkdir -p temp
 
-echo "4. 设置权限..."
+echo "4. Setting executable permissions..."
 chmod +x tools
 
-echo "构建完成！"
+echo "Build complete!"
 echo ""
-echo "使用方法："
-echo "1. 运行程序: ./tools"
-echo "2. 在浏览器中访问: http://localhost:8080"
+echo "How to use:"
+echo "1. Run the binary: ./tools"
+echo "2. Open in your browser: http://localhost:8080"
 echo ""
-echo "工具说明："
-echo "- 工具1: 文件比较工具 - 上传两个文件进行内容比较"
-echo "- 工具2: CSV查看器 - 上传CSV文件查看内容"
-echo "- 工具3: 压缩文件交易比较 - 上传ZIP文件，比较交易文件差异"
+echo "Tool overview:"
+echo "- Tool 1: File comparison - upload two files to compare their content."
+echo "- Tool 2: CSV viewer - upload a CSV file to inspect its rows."
+echo "- Tool 3: Archive trade comparison - upload a ZIP file to compare trade files."

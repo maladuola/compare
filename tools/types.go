@@ -1,6 +1,6 @@
 package tools
 
-// DiffLine 表示差异行
+// DiffLine represents a single diff result line.
 type DiffLine struct {
 	Type     string `json:"type"` // "equal", "delete", "insert"
 	Line1    string `json:"line1"`
